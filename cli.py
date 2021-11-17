@@ -53,16 +53,27 @@ class PySH():
 	def cat(self,args:list = []):
 		Utility().check_args(args,1,1)
 		if not os.path.isfile(args[0]):
-			raise FileError('invalid file location')
+			raise FileNotFoundError('invalid file location')
 		self.clear()
-		columns = os.get_terminal_size().columns
-		lines = os.get_terminal_size().lines
+		try:
+			columns = os.get_terminal_size().columns
+			lines = os.get_terminal_size().lines
+		except:
+			try:lines, columns = [ int(o) for o in os.popen('stty size', 'r').read().split() ]
+			except:raise Exception('cannot get console size')
+		with open(args[0],'r') as file:
+			rows = file.read().split('\n')
 		print(f'{args[0]}'+'-'*(columns-len(args[0])))
 		for i in range(lines-3):
-		    with open(args[0],'r') as file:
-		        print(file.read().split('\n')[i][:columns])
-		print('-'*columns)
+			try:print(rows[i][:columns])
+			except:break
+		if len(rows) > lines-3:
+			print('-'*(columns-12)+'File cut off')
+		else:
+			print('-'*columns)
 		return
+	def test(self,args:list = []):
+		return 'Working well!'
 	def sys(self,args:list = []):
 		Utility().check_args(args,1,999)
 		return os.system(' '.join(args))
