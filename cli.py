@@ -55,12 +55,7 @@ class PySH():
 		if not os.path.isfile(args[0]):
 			raise FileNotFoundError('invalid file location')
 		self.clear()
-		try:
-			columns = os.get_terminal_size().columns
-			lines = os.get_terminal_size().lines
-		except:
-			try:lines, columns = [ int(o) for o in os.popen('stty size', 'r').read().split() ]
-			except:lines, columns = [50,100]#raise Exception('cannot get console size')
+		lines, columns = Utility().get_size()
 		with open(args[0],'r') as file:
 			rows = file.read().split('\n')
 		print(f'{args[0]}'+'-'*(columns-len(args[0])))
@@ -92,6 +87,12 @@ class Utility():
 			raise IndexError('too many arguments')
 		else:
 			return True
+	def get_size(self):
+		try:
+			return os.get_terminal_size().lines, os.get_terminal_size().columns
+		except:
+			try:return [ int(o) for o in os.popen('stty size', 'r').read().split() ]
+			except:return 50, 100#raise Exception('cannot get console size')
 
 def main():
 	Login().create_log_file()
