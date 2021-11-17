@@ -49,8 +49,15 @@ class PySH():
 			os.chdir(path)
 		return
 	def ls(self,args:list = []):
+		print('# Notice of usage - unfinised command')
+		# Currently, since I'm a couch potato, this command simply just redirects into
+		# the system's implementation of it
+		# No regard for whether or not the command actually exists, might I add.
 		Utility().check_args(args,0,1)
-		return ' '.join(os.listdir(os.getcwd()))
+		return os.system(f'ls {" ".join(args)}')
+		lines, columns = Utility().get_size()
+		o = ' '.join(os.listdir(os.getcwd()))
+		return '\n'.join(o[i:i+columns] for i in range(0, len(o), columns))
 	def clear(self,args:list = []):
 		Utility().check_args(args)
 		print('\033[H\033[J', end='')
@@ -76,24 +83,24 @@ class PySH():
 		return 'Working well!'
 	def uname(self,args:list = []):
 		Utility().check_args(args,0,1)
-		if not args or args[0] == '-a':
-			return platform.uname()
-		elif args[0] == '-n':
-			return account.username
-		elif args[0] == '-s':
-			return platform.system()
-		elif args[0] in ('-p','-m','-i'):
+		usage = Utility().require_opts(args,['a','m','n','p','r','s','v'])
+		if not args or args[0] == usage[0]:
+			return ' '.join(os.uname())
+		elif args[0] == usage[1]:
+			return platform.machine()
+		elif args[0] == usage[2]:
+			return platform.node()
+		elif args[0] == usage[3]:
 			return platform.processor()
-		elif args[0] == '-o':
+		elif args[0] == usage[4]:
+			return platform.release()
+		elif args[0] == usage[5]:
 			return platform.system()
-		elif args[0] == '-v':
+		elif args[0] == usage[6]:
 			return platform.version()
-		elif args[0] == '-r':
-			return ''
-		else:
-			raise Exception('unknown argument')
 	def groups(self,args:list = []):
-		Utility().check_args(args,1,1)
+		Utility().check_args(args,0,1)
+		args.append(account.username)
 		for i in accounts:
 			if i.username == args[0]:
 				return f'{i.username} ' + ' '.join(i.flags)
@@ -103,6 +110,7 @@ class PySH():
 		return os.system(' '.join(args))
 	def python(self,args:list = []):
 		# AYO, WHY AIN'T THIS IMPLEMENTED YET!
+		# Reminder: Use PyTAS's implementation of this feature
 		return
 	def exit(self,args:list = []):
 		Utility().check_args(args)
@@ -116,6 +124,14 @@ class Utility():
 			raise IndexError('too many arguments')
 		else:
 			return True
+	def require_opts(self,args:list,usage:list):
+		e = f'illegal option %s\nusage: {inspect.stack()[1][3]} [-{"".join(usage)}]'
+		for i in args:
+			if not i.startswith('-'):
+				raise ValueError(e % i)
+			if i.replace('-','') not in usage:
+				raise ValueError(e % i)
+		return [ '-' + o for o in usage ]
 	def get_size(self):
 		try:
 			return os.get_terminal_size().lines, os.get_terminal_size().columns
@@ -140,12 +156,13 @@ def main():
 				if account.username == i.username and account.password == i.password:
 					log = True
 			break
-	while not account.password:
-		account.password = hash(input('This account isn\'t recognized.\nPlease enter a new password: '))
-		if account.password:
-			Login().add_login(account)
-			log = True
-			accounts.append(account)
+	if flags:
+		while not account.password:
+			account.password = hash(input('This account isn\'t recognized.\nPlease enter a new password: '))
+			if account.password:
+				Login().add_login(account)
+				log = True
+				accounts.append(account)
 	if not log:
 		print('Failed login. Please try again')
 		main()
