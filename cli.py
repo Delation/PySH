@@ -11,10 +11,12 @@ class User:
 	flags: list
 	password: str = None
 
-import os, inspect, sys
+import os, inspect, sys, platform
 
 shell = 'PySH'
 accounts = []
+account = None
+flags = []
 hashseed = os.getenv('PYTHONHASHSEED')
 if not hashseed:
 	os.environ['PYTHONHASHSEED'] = '0'
@@ -22,8 +24,11 @@ if not hashseed:
 
 class Login():
 	def create_log_file(self,path:str = './user.txt'):
-		with open(path,'a') as i:
-			i.write('')
+		if not os.path.isfile(path):
+			with open(path,'a') as i:
+				i.write('')
+		else:
+			return True
 	def get_login(self,path:str = './user.txt'): # from file
 		with open(path,'r',encoding='utf-8-sig') as i:
 			for n in i.readlines():
@@ -34,7 +39,7 @@ class Login():
 				accounts.append(test)
 	def add_login(self,account:User,path:str = './user.txt'):
 		with open(path,'a') as i:
-			i.write(f'{account.username}|{account.flags}|{account.password}\n')
+			i.write(f'{account.username}|{",".join(account.flags)}|{account.password}\n')
 
 class PySH():
 	def cd(self,args:list = []):
@@ -69,6 +74,30 @@ class PySH():
 		return
 	def test(self,args:list = []):
 		return 'Working well!'
+	def uname(self,args:list = []):
+		Utility().check_args(args,1,1)
+		if args[0] == '-a':
+			return platform.uname()
+		elif args[0] == '-n':
+			return account.username
+		elif args[0] == '-s':
+			return platform.system()
+		elif args[0] in ('-p','-m','-i'):
+			return platform.processor()
+		elif args[0] == '-o':
+			return platform.system()
+		elif args[0] == '-v':
+			return platform.version()
+		elif args[0] == '-r':
+			return ''
+		else:
+			raise Exception('unknown argument')
+	def groups(self,args:list = []):
+		Utility().check_args(args,1,1)
+		for i in accounts:
+			if i.username == args[0]:
+				return f'{i.username} ' + ' '.join(i.flags)
+		raise ValueError('unknown account')
 	def sys(self,args:list = []):
 		Utility().check_args(args,1,999)
 		return os.system(' '.join(args))
@@ -95,10 +124,15 @@ class Utility():
 			except:return 50, 100#raise Exception('cannot get console size')
 
 def main():
-	Login().create_log_file()
-	Login().get_login()
+	global account
+	global accounts
+	global flags
+	if Login().create_log_file():
+		Login().get_login()
+	else:
+		flags.append('administrator')
 	log = False
-	account = User(input('Username: '),[])
+	account = User(input('Username: '),flags)
 	for i in accounts:
 		if account.username == i.username:
 			account.password = hash(input(f'Welcome back, {account.username}\nPlease enter your password: '))
@@ -111,6 +145,7 @@ def main():
 		if account.password:
 			Login().add_login(account)
 			log = True
+			accounts.append(account)
 	if not log:
 		print('Failed login. Please try again')
 		main()
@@ -121,7 +156,7 @@ def main():
 	while log:
 		location = os.getcwd()
 		work = False
-		cmd = input(f'{os.path.dirname(location)}:~ {account.username}$ ').split(' ')
+		cmd = input(f'{os.path.dirname(location)}:~ {account.username}$ ').lstrip().rstrip().split(' ')
 		for i in commands:
 			if cmd[0] == i[0]:
 				try:
