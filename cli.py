@@ -75,8 +75,8 @@ class PySH():
 	def test(self,args:list = []):
 		return 'Working well!'
 	def uname(self,args:list = []):
-		Utility().check_args(args,1,1)
-		if args[0] == '-a':
+		Utility().check_args(args,0,1)
+		if not args or args[0] == '-a':
 			return platform.uname()
 		elif args[0] == '-n':
 			return account.username
