@@ -60,7 +60,7 @@ class PySH():
 			lines = os.get_terminal_size().lines
 		except:
 			try:lines, columns = [ int(o) for o in os.popen('stty size', 'r').read().split() ]
-			except:raise Exception('cannot get console size')
+			except:lines, columns = [50,100]#raise Exception('cannot get console size')
 		with open(args[0],'r') as file:
 			rows = file.read().split('\n')
 		print(f'{args[0]}'+'-'*(columns-len(args[0])))
