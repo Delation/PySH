@@ -11,11 +11,15 @@ class User:
 	flags: list
 	password: str = None
 
-import os, inspect
+import os, inspect, sys
 
 shell = 'PySH'
 accounts = []
-	
+hashseed = os.getenv('PYTHONHASHSEED')
+if not hashseed:
+	os.environ['PYTHONHASHSEED'] = '0'
+	os.execv(sys.executable, [sys.executable] + sys.argv)
+
 class Login():
 	def create_log_file(self,path:str = './user.txt'):
 		with open(path,'a') as i:
@@ -33,29 +37,50 @@ class Login():
 			i.write(f'{account.username}|{account.flags}|{account.password}\n')
 
 class PySH():
-	def cd(self,args):
-		if len(args) > 1:
-			raise IndexError('too many arguments')
-		try: path = args[0]
-		except: path = ''
-		os.chdir(path)
+	def cd(self,args:list = []):
+		Utility().check_args(args,0,1)
+		if args:
+			path = args[0]
+			os.chdir(path)
 		return
-	def ls(self,args):
+	def ls(self,args:list = []):
+		Utility().check_args(args,0,1)
 		return ' '.join(os.listdir(os.getcwd()))
-	def clear(self,args):
-		if len(args) != 0:
-			raise IndexError('too many arguments')
-		os.system('clear') # REWRITE IN PURE PYTHON
+	def clear(self,args:list = []):
+		Utility().check_args(args)
+		print('\033[H\033[J', end='')
 		return
-	def sys(self,args):
+	def cat(self,args:list = []):
+		Utility().check_args(args,1,1)
+		if not os.path.isfile(args[0]):
+			raise FileError('invalid file location')
+		self.clear()
+		columns = os.get_terminal_size().columns
+		lines = os.get_terminal_size().lines
+		print(f'{args[0]}'+'-'*(columns-len(args[0])))
+		for i in range(lines-3):
+		    with open(args[0],'r') as file:
+		        print(file.read().split('\n')[i][:columns])
+		print('-'*columns)
+		return
+	def sys(self,args:list = []):
+		Utility().check_args(args,1,999)
 		return os.system(' '.join(args))
-	def python(self,args):
+	def python(self,args:list = []):
 		# AYO, WHY AIN'T THIS IMPLEMENTED YET!
 		return
-	def exit(self,args):
-		if len(args) != 0:
-			raise IndexError('too many arguments')
+	def exit(self,args:list = []):
+		Utility().check_args(args)
 		quit()
+
+class Utility():
+	def check_args(self,args:list,min:int = 0,max:int = 0):
+		if len(args) < min:
+			raise IndexError('not enough arguments')
+		elif len(args) > max:
+			raise IndexError('too many arguments')
+		else:
+			return True
 
 def main():
 	Login().create_log_file()
@@ -78,12 +103,13 @@ def main():
 		print('Failed login. Please try again')
 		main()
 		return
-	
+
+	PySH().clear()
 	commands = [o for o in inspect.getmembers(PySH)if inspect.isfunction(o[1])]
 	while log:
 		location = os.getcwd()
 		work = False
-		cmd = input(f'{account.username} % {os.path.dirname(location)} >>> ').split(' ')
+		cmd = input(f'{os.path.dirname(location)}:~ {account.username}$ ').split(' ')
 		for i in commands:
 			if cmd[0] == i[0]:
 				try:
@@ -91,16 +117,14 @@ def main():
 					output = i[1](PySH(),cmd)
 					if output:
 						print(output)
-				except IndexError as e:
-					print(f'{shell}: {i[0]}: {e}')
 				except Exception as e:
-					print(e)
+					print(f'{shell}: {i[0]}: {e}')
 				work = True
 				break
 		if not work:
-			print('Unknown command')
+			print(f'{shell}: command not found: {cmd[0]}')
 	main()
-	return	
-	
+	return
+
 if __name__ == "__main__":
 	main()
