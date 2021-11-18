@@ -89,7 +89,7 @@ def main():
 		work = False
 		cmd = input(f'{os.path.dirname(location)}:~ {account.username}$ ').lstrip().rstrip().split(' ')
 		for i in commands:
-			if i in ('__builtins__','system','os','inspect','platform'):
+			if i in ('__builtins__','system','os','inspect','platform') or not callable(commands[i]):
 				continue
 			if cmd[0] == i:
 				try:
