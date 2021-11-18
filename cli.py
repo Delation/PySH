@@ -14,6 +14,7 @@ class User:
 import os, sys
 
 shell = 'PySH'
+bin = './py/'
 accounts = []
 account = None
 flags = []
@@ -23,13 +24,13 @@ if not hashseed:
 	os.execv(sys.executable, [sys.executable] + sys.argv)
 
 class Login():
-	def create_log_file(self,path:str = './user.txt'):
+	def create_log_file(self,path:str = bin+'users'):
 		if not os.path.isfile(path):
 			with open(path,'a') as i:
 				i.write('')
 		else:
 			return True
-	def get_login(self,path:str = './user.txt'): # from file
+	def get_login(self,path:str = bin+'users'): # from file
 		with open(path,'r',encoding='utf-8-sig') as i:
 			for n in i.readlines():
 				args = n.split('|')
@@ -37,7 +38,7 @@ class Login():
 					break
 				test = User(args[0],args[1].split(','),int(args[2]))
 				accounts.append(test)
-	def add_login(self,account:User,path:str = './user.txt'):
+	def add_login(self,account:User,path:str = bin+'users'):
 		with open(path,'a') as i:
 			i.write(f'{account.username}|{",".join(account.flags)}|{account.password}\n')
 
@@ -70,7 +71,6 @@ def main():
 		main()
 		return
 
-	bin = './py/'
 	commands = {}
 
 	i = []
@@ -78,6 +78,8 @@ def main():
 	    i.extend(files)
 	    break
 	for i in i:
+		if not i.endswith('.py'):
+			continue
 		with open(bin + i,'r') as file:
 			exec(file.read(), commands, None)
 	commands['clear']()
