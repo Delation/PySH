@@ -1,11 +1,18 @@
 #!/bin/pysh
 def python(args:list = []):
-	# AYO, WHY AIN'T THIS IMPLEMENTED YET!
-	# Reminder: Use PyTAS's implementation of this feature
+	# A lacking Python interpreter
+	# Users do not have root Python access
+	while True:
+		cmd = input('>>> ')
+		if cmd.startswith('exit'):
+			break
+		elif cmd.startswith('help'):
+			func = globals()
+			del func['__builtins__']
+			print('\n'.join(func))
+		else:
+			try:
+				exec(cmd)
+			except Exception as e:
+				print(f'{shell}: {inspect.stack()[0][3]}: {e}')
 	return
-
-# Use exec() and install user-input to root. Yes, I'm trusting users with root access.
-# Should I? Yeah I guess.
-# Remember to add a check for administrator flags. Maybe implement sudo command
-# as well.
-# MCMi460 out!

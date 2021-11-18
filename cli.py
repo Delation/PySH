@@ -83,6 +83,7 @@ def main():
 		with open(bin + i,'r') as file:
 			exec(file.read(), commands, None)
 	commands['clear']()
+	commands['shell'] = shell
 	while log:
 		location = commands['os'].getcwd()
 		work = False
