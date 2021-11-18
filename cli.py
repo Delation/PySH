@@ -11,7 +11,7 @@ class User:
 	flags: list
 	password: str = None
 
-import os, inspect, sys, platform
+import os, sys
 
 shell = 'PySH'
 accounts = []
@@ -40,104 +40,6 @@ class Login():
 	def add_login(self,account:User,path:str = './user.txt'):
 		with open(path,'a') as i:
 			i.write(f'{account.username}|{",".join(account.flags)}|{account.password}\n')
-
-class PySH():
-	def cd(self,args:list = []):
-		Utility().check_args(args,0,1)
-		if args:
-			path = args[0]
-			os.chdir(path)
-		return
-	def ls(self,args:list = []):
-		print('# Notice of usage - unfinised command')
-		# Currently, since I'm a couch potato, this command simply just redirects into
-		# the system's implementation of it
-		# No regard for whether or not the command actually exists, might I add.
-		Utility().check_args(args,0,1)
-		return os.system(f'ls {" ".join(args)}')
-		lines, columns = Utility().get_size()
-		o = ' '.join(os.listdir(os.getcwd()))
-		return '\n'.join(o[i:i+columns] for i in range(0, len(o), columns))
-	def clear(self,args:list = []):
-		Utility().check_args(args)
-		print('\033[H\033[J', end='')
-		return
-	def cat(self,args:list = []):
-		Utility().check_args(args,1,1)
-		if not os.path.isfile(args[0]):
-			raise FileNotFoundError('invalid file location')
-		self.clear()
-		lines, columns = Utility().get_size()
-		with open(args[0],'r') as file:
-			rows = file.read().split('\n')
-		print(f'{args[0]}'+'-'*(columns-len(args[0])))
-		for i in range(lines-3):
-			try:print(rows[i][:columns])
-			except:break
-		if len(rows) > lines-3:
-			print('-'*(columns-12)+'File cut off')
-		else:
-			print('-'*columns)
-		return
-	def test(self,args:list = []):
-		return 'Working well!'
-	def uname(self,args:list = []):
-		Utility().check_args(args,0,1)
-		usage = Utility().require_opts(args,['a','m','n','p','r','s','v'])
-		if not args or args[0] == usage[0]:
-			return ' '.join(os.uname())
-		elif args[0] == usage[1]:
-			return platform.machine()
-		elif args[0] == usage[2]:
-			return platform.node()
-		elif args[0] == usage[3]:
-			return platform.processor()
-		elif args[0] == usage[4]:
-			return platform.release()
-		elif args[0] == usage[5]:
-			return platform.system()
-		elif args[0] == usage[6]:
-			return platform.version()
-	def groups(self,args:list = []):
-		Utility().check_args(args,0,1)
-		args.append(account.username)
-		for i in accounts:
-			if i.username == args[0]:
-				return f'{i.username} ' + ' '.join(i.flags)
-		raise ValueError('unknown account')
-	def sys(self,args:list = []):
-		Utility().check_args(args,1,999)
-		return os.system(' '.join(args))
-	def python(self,args:list = []):
-		# AYO, WHY AIN'T THIS IMPLEMENTED YET!
-		# Reminder: Use PyTAS's implementation of this feature
-		return
-	def exit(self,args:list = []):
-		Utility().check_args(args)
-		quit()
-
-class Utility():
-	def check_args(self,args:list,min:int = 0,max:int = 0):
-		if len(args) < min:
-			raise IndexError('not enough arguments')
-		elif len(args) > max:
-			raise IndexError('too many arguments')
-		else:
-			return True
-	def require_opts(self,args:list,usage:list):
-		e = f'illegal option %s\nusage: {inspect.stack()[1][3]} [-{"".join(usage)}]'
-		for i in args:
-			if not i.startswith('-'):
-				raise ValueError(e % i)
-			if i.replace('-','') not in usage:
-				raise ValueError(e % i)
-		return [ '-' + o for o in usage ]
-	def get_size(self):
-		try:
-			return os.get_terminal_size().lines, os.get_terminal_size().columns
-		except:
-			try:return [ int(o) for o in os.popen('stty size', 'r').read().split() ]
-			except:return 50, 100#raise Exception('cannot get console size')
 
 def main():
 	global account
@@ -168,21 +70,32 @@ def main():
 		main()
 		return
 
-	PySH().clear()
-	commands = [o for o in inspect.getmembers(PySH)if inspect.isfunction(o[1])]
+	bin = './py/'
+	commands = {}
+
+	i = []
+	for (path, dirs, files) in os.walk(bin):
+	    i.extend(files)
+	    break
+	for i in i:
+		with open(bin + i,'r') as file:
+			exec(file.read(), commands, None)
+	commands['clear']()
 	while log:
-		location = os.getcwd()
+		location = commands['os'].getcwd()
 		work = False
 		cmd = input(f'{os.path.dirname(location)}:~ {account.username}$ ').lstrip().rstrip().split(' ')
 		for i in commands:
-			if cmd[0] == i[0]:
+			if i in ('__builtins__','system','os','inspect','platform'):
+				continue
+			if cmd[0] == i:
 				try:
 					cmd.pop(0)
-					output = i[1](PySH(),cmd)
+					output = commands[i](cmd)
 					if output:
 						print(output)
 				except Exception as e:
-					print(f'{shell}: {i[0]}: {e}')
+					print(f'{shell}: {i}: {e}')
 				work = True
 				break
 		if not work:
