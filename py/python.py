@@ -7,7 +7,7 @@ def python(args:list = []):
 		if cmd.startswith('exit'):
 			break
 		elif cmd.startswith('help'):
-			print('Available functions:')
+			print('Available variables:')
 			func = globals().copy()
 			del func['__builtins__']
 			print('\n'.join(func))

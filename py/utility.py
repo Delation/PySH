@@ -1,5 +1,4 @@
 import os, inspect, sys as system, platform
-shell = None
 
 class Utility():
 	def check_args(self,args:list,min:int = 0,max:int = 0):

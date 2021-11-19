@@ -84,10 +84,12 @@ def main():
 			exec(file.read(), commands, None)
 	commands['clear']()
 	commands['shell'] = shell
+	commands['accounts'] = accounts
+	commands['account'] = account
 	while log:
 		location = commands['os'].getcwd()
 		work = False
-		cmd = input(f'{os.path.dirname(location)}:~ {account.username}$ ').lstrip().rstrip().split(' ')
+		cmd = input(f'{os.path.abspath(location)}:~ {account.username}$ ').lstrip().rstrip().split(' ')
 		for i in commands:
 			if i in ('__builtins__','system','os','inspect','platform') or not callable(commands[i]):
 				continue
