@@ -1,5 +1,5 @@
 #!/bin/pysh
-def help(self,args:list = []):
+def help(args:list = []):
 	func = globals().copy()
 	del func['__builtins__']
 	del func['Utility']

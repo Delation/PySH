@@ -1,2 +1,2 @@
-def test(self,args:list = []):
+def test(args:list = []):
 	return 'Working well!'

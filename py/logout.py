@@ -1,4 +1,4 @@
 #!/bin/pysh
-def logout(self,args:list = []):
+def logout(args:list = []):
 	Utility().check_args(args)
 	return 'Will be implemented later - need to sleep'
