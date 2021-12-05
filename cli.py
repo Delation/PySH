@@ -54,7 +54,7 @@ class Login():
 			i.write(f'{account.username}|{",".join(account.flags)}|{account.password}\n')
 
 def main():
-	global account, accounts, flags, location, buffer, history, get_input, listener
+	global account, accounts, flags, location, buffer, history, get_input, listener, cursor
 	if Login().create_log_file():
 		Login().get_login()
 	else:
@@ -104,6 +104,7 @@ def main():
 	commands['listener'] = listener
 	while log:
 		get_input = True
+		cursor = 0
 		if buffer:history.append(buffer.replace(location,''))
 		location = f'{os.path.abspath(commands["os"].getcwd())}:~ {account.username}$ '
 		work = False
