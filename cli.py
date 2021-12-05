@@ -25,6 +25,7 @@ if not hashseed:
 	os.execv(sys.executable, [sys.executable] + sys.argv)
 
 from pynput.keyboard import Key, Controller, Listener
+from pynput import mouse
 
 keyboard = Controller()
 location = ''
@@ -86,6 +87,11 @@ def main():
 		on_release=on_release)
 	listener.start()
 
+	mlistener = mouse.Listener(
+		on_click=on_click
+		)
+	mlistener.start()
+
 	commands = {}
 
 	i = []
@@ -125,13 +131,20 @@ def main():
 				if not listener.running:
 					raise Exception()
 			except:
-				input('\nPlease press enter when you wish to enter the console.')
-				listener = Listener(
-					suppress=True,
-					on_press=on_press,
-					on_release=on_release)
-				listener.start()
-				refreshBuffer()
+				print('You have exited the console.')
+				while True:
+					print('Please press enter when you wish to re-enter the console.',end='\n',flush=True)
+					a = input('>')
+					if a == None:
+						print('test')
+						continue
+					listener = Listener(
+						suppress=True,
+						on_press=on_press,
+						on_release=on_release)
+					listener.start()
+					refreshBuffer()
+					break
 		commands['listener'] = listener
 		print('')
 		cmd = buffer.replace(location,'').lstrip().rstrip().split(' ')
@@ -181,21 +194,28 @@ def on_press(key):
 			cursor += 1
 			buffer = f'{location}'
 			refreshBuffer()
-	elif key == Key.esc:
-		listener.stop()
-		listener = None
-		refreshBuffer()
 	else:
 		try:
 			print(key.char,end='',flush=True)
 			buffer = buffer + key.char
-		except Exception:
-			pass
+		except AttributeError:
+			listener.stop()
+			listener = None
+			refreshBuffer()
 
 def on_release(key):
 	global buffer, get_input
 	if not get_input:
 		return
+
+def on_click(x,y,button,pressed):
+	global listener
+	if not get_input:
+		return
+	if listener:
+		listener.stop()
+		listener = None
+		refreshBuffer()
 
 def refreshBuffer():
 	print('',end='\r',flush=True)
