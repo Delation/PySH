@@ -101,6 +101,7 @@ def main():
 	commands['shell'] = shell
 	commands['accounts'] = accounts
 	commands['account'] = account
+	commands['listener'] = listener
 	while log:
 		get_input = True
 		if buffer:history.append(buffer.replace(location,''))
@@ -119,7 +120,10 @@ def main():
 			if location not in buffer:
 				buffer = f'{location}'
 				refreshBuffer()
-			if not listener:
+			try:
+				if not listener.running:
+					raise Exception()
+			except:
 				input('\nPlease press enter when you wish to enter the console.')
 				listener = Listener(
 					suppress=True,
@@ -127,6 +131,7 @@ def main():
 					on_release=on_release)
 				listener.start()
 				refreshBuffer()
+		commands['listener'] = listener
 		print('')
 		cmd = buffer.replace(location,'').lstrip().rstrip().split(' ')
 		for i in commands:

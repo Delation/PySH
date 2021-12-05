@@ -1,7 +1,10 @@
 #!/bin/pysh
 def python(args:list = []):
+	global listener
 	# A lacking Python interpreter
 	# Users do not have root Python access
+	listener.stop()
+	listener = None
 	while True:
 		cmd = input('>>> ')
 		if cmd.startswith('exit'):
