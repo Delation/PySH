@@ -10,3 +10,4 @@ test/
 
 # Python
 venv/
+__pycache__/
