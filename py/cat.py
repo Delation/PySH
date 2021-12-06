@@ -1,6 +1,6 @@
 #!/bin/pysh
 def cat(filename:str):
-	if not os.path.isfile(args[0]):
+	if not os.path.isfile(filename):
 		raise FileNotFoundError('invalid file location')
 	clear()
 	lines, columns = Utility().get_size()
