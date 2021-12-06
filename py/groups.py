@@ -1,8 +1,8 @@
 #!/bin/pysh
-def groups(args:list = []):
-	Utility().check_args(args,0,1)
-	args.append(account.username)
+def groups(user = None):
+	if not user:
+		user = account.username
 	for i in accounts:
-		if i.username == args[0]:
+		if i.username == user:
 			return f'{i.username} ' + ' '.join(i.flags)
 	raise ValueError('unknown account')

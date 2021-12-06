@@ -87,6 +87,11 @@ def main():
 	commands['accounts'] = accounts
 	commands['account'] = account
 	while log:
+		if not commands['account']:
+			log = False
+			commands['clear']()
+			main()
+			return
 		location = commands['os'].getcwd()
 		work = False
 		cmd = input(f'{os.path.abspath(location)}:~ {account.username}$ ').lstrip().rstrip().split(' ')
@@ -96,9 +101,11 @@ def main():
 			if cmd[0] == i:
 				try:
 					cmd.pop(0)
-					output = commands[i](cmd)
+					output = commands[i](*cmd)
 					if output:
 						print(output)
+				except IndexError as e:
+					print(f'{shell}: {i}: {e}')
 				except Exception as e:
 					print(f'{shell}: {i}: {e}')
 				work = True

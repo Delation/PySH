@@ -1,5 +1,5 @@
 #!/bin/pysh
-def python(args:list = []):
+def python():
 	# A lacking Python interpreter
 	# Users do not have root Python access
 	while True:

@@ -1,13 +1,6 @@
 import os, inspect, sys as system, platform
 
 class Utility():
-	def check_args(self,args:list,min:int = 0,max:int = 0):
-		if len(args) < min:
-			raise IndexError('not enough arguments')
-		elif len(args) > max:
-			raise IndexError('too many arguments')
-		else:
-			return True
 	def require_opts(self,args:list,usage:list):
 		e = f'illegal option %s\nusage: {inspect.stack()[1][3]} [-{"".join(usage)}]'
 		for i in args:
