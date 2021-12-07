@@ -1,13 +1,12 @@
 #!/bin/pysh
-def cat(args:list = []):
-	Utility().check_args(args,1,1)
-	if not os.path.isfile(args[0]):
+def cat(filename:str):
+	if not os.path.isfile(filename):
 		raise FileNotFoundError('invalid file location')
 	clear()
 	lines, columns = Utility().get_size()
-	with open(args[0],'r') as file:
+	with open(filename,'r') as file:
 		rows = file.read().split('\n')
-	print(f'{args[0]}'+'-'*(columns-len(args[0])))
+	print(f'{filename}'+'-'*(columns-len(filename)))
 	for i in range(lines-3):
 		try:print(rows[i][:columns])
 		except:break

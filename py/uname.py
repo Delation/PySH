@@ -1,18 +1,19 @@
 #!/bin/pysh
-def uname(args:list = []):
-	Utility().check_args(args,0,1)
-	usage = Utility().require_opts(args,['a','m','n','p','r','s','v'])
-	if not args or args[0] == usage[0]:
+def uname(option:str = None):
+	if not option:
+		option = '-a'
+	usage = Utility().require_opts([option,],['a','m','n','p','r','s','v'])
+	if option == usage[0]:
 		return ' '.join(os.uname())
-	elif args[0] == usage[1]:
+	elif option == usage[1]:
 		return platform.machine()
-	elif args[0] == usage[2]:
+	elif option == usage[2]:
 		return platform.node()
-	elif args[0] == usage[3]:
+	elif option == usage[3]:
 		return platform.processor()
-	elif args[0] == usage[4]:
+	elif option == usage[4]:
 		return platform.release()
-	elif args[0] == usage[5]:
+	elif option == usage[5]:
 		return platform.system()
-	elif args[0] == usage[6]:
+	elif option == usage[6]:
 		return platform.version()

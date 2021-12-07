@@ -1,6 +1,5 @@
 #!/bin/pysh
-def logout(args:list = []):
-	Utility().check_args(args)
+def logout():
 	global account
 	username = account.username
 	account = None

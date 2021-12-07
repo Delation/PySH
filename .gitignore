@@ -11,3 +11,7 @@ test/
 # Python
 venv/
 __pycache__/
+
+# C/C++
+*.c
+*.cpp

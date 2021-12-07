@@ -1,4 +1,5 @@
 #!/bin/pysh
-def sys(args:list = []):
-	Utility().check_args(args,1,999)
-	return os.system(' '.join(args))
+def sys(*args):
+	if len(args) > 0:
+		return os.system(' '.join(args))
+	raise IndexError()
