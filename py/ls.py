@@ -1,4 +1,4 @@
-#!/bin/pysh
+#! /PySH/cli
 def ls(*args):
 	print('# Notice of usage - unfinised command')
 	# Currently, since I'm a couch potato, this command simply just redirects into

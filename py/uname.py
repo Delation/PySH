@@ -1,4 +1,4 @@
-#!/bin/pysh
+#! /PySH/cli
 def uname(option:str = None):
 	if not option:
 		option = '-a'

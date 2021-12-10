@@ -1,4 +1,4 @@
-#!/bin/pysh
+#! /PySH/cli
 def help():
 	func = globals().copy()
 	del func['__builtins__']

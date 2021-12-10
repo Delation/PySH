@@ -1,3 +1,3 @@
-#!/bin/pysh
+#! /PySH/cli
 def exit():
 	quit()
