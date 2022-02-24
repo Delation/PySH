@@ -1,4 +1,3 @@
-#! /PySH/cli
 def logout():
 	global account
 	username = account.username

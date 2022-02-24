@@ -1,4 +1,3 @@
-#! /PySH/cli
 def cat(filename:str):
 	if not os.path.isfile(filename):
 		raise FileNotFoundError('invalid file location')

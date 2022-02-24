@@ -1,6 +1,7 @@
-#! /PySH/cli
-def grep(option:str, search_string:str, location:str):
+def grep(option:str, search_string:str = None, location:str = None):
 	usage = Utility().require_opts([option,],['i','c','r'])
+	if None in (search_string, location):
+		raise TypeError('missing one or more positional arguments')
 	if option == usage[0]:
 		if not os.path.isfile(location):raise FileNotFoundError(f'file {location} not found')
 		with open(location,'r') as file:
@@ -23,5 +24,4 @@ def grep(option:str, search_string:str, location:str):
 				return '\n'.join([ i for i in file.read().split('\n') if search_string in i ])
 		else:
 			raise FileNotFoundError(f'directory {location} not found')
-		return
 	return

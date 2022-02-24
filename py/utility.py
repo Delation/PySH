@@ -4,9 +4,7 @@ class Utility():
 	def require_opts(self,args:list,usage:list):
 		e = f'illegal option %s\nusage: {inspect.stack()[1][3]} [-{"".join(usage)}]'
 		for i in args:
-			if not i.startswith('-'):
-				raise ValueError(e % i)
-			if i.replace('-','') not in usage:
+			if not i.startswith('-') or i.replace('-','') not in usage:
 				raise ValueError(e % i)
 		return [ '-' + o for o in usage ]
 	def get_size(self):

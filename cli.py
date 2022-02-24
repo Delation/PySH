@@ -1,8 +1,4 @@
-# Please don't rely on already existing shell commands for function usage
-# -Delation
-
-from enum import Enum # For operations
-OS = Enum('Operating System', 'windows mac ?')
+#!/usr/bin/env python3
 
 from dataclasses import dataclass # For internal storage sorting
 @dataclass
@@ -14,7 +10,14 @@ class User:
 import os, sys
 
 shell = 'PySH'
-bin = './py/'
+bin = '/'.join(sys.argv[0].split('/')[:-1]) + '/py/'
+if sys.argv[0].count('/') < 1:
+	bin = './py/'
+if not os.path.isdir(bin):
+	bin = '/usr/local/share/py/'
+	if not os.path.isdir(bin):
+		print("Failed to get resources")
+		quit()
 accounts = []
 account = None
 flags = []
@@ -82,10 +85,11 @@ def main():
 			continue
 		with open(bin + i,'r') as file:
 			exec(file.read(), commands, None)
-	commands['clear']()
 	commands['shell'] = shell
 	commands['accounts'] = accounts
 	commands['account'] = account
+	if not len(sys.argv) > 1:
+		commands['clear']()
 	while log:
 		if not commands['account']:
 			log = False
@@ -94,7 +98,11 @@ def main():
 			return
 		location = commands['os'].getcwd()
 		work = False
-		cmd = input(f'{os.path.abspath(location)}:~ {account.username}$ ').lstrip().rstrip().split(' ')
+		if len(sys.argv) > 1:
+			cmd = sys.argv[2:]
+			cmd.insert(0,os.path.splitext(sys.argv[1])[0][2:])
+		else:
+			cmd = input(f'{os.path.abspath(location)}:~ {account.username}$ ').lstrip().rstrip().split(' ')
 		for i in commands:
 			if i in ('__builtins__','system','os','inspect','platform') or not callable(commands[i]):
 				continue
@@ -112,6 +120,8 @@ def main():
 				break
 		if not work:
 			print(f'{shell}: command not found: {cmd[0]}')
+		if len(sys.argv) > 1:
+			return
 	main()
 	return
 

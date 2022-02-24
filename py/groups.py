@@ -1,4 +1,3 @@
-#! /PySH/cli
 def groups(user = None):
 	if not user:
 		user = account.username

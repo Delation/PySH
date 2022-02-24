@@ -1,4 +1,3 @@
-#! /PySH/cli
 def python():
 	# A lacking Python interpreter
 	# Users do not have root Python access
