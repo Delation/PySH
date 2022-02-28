@@ -1,4 +1,4 @@
-echo "Preparing install..."
+echo "Preparing uninstall..."
 
 echo "  -Writing utility functions and variables..."
 function writeNeutral {
@@ -36,15 +36,6 @@ case $OSTYPE in
 executable=$executableDir"/"$(echo $shell | tr 'A-Z' 'a-z')
 resource=$resourceDir"/pysh"
 
-echo "  -Assessing files..."
-
-if [ ! -e "./cli.py" ] || [ ! -d "./py/" ]
-then
-  catchError "Missing important files/directories"
-fi
-
-chmod +x "./cli.py"
-
 echo "  -Entering superuser..."
 writeYellow "This is required to write to root-level"
 # This just prompts entering your password for sudo
@@ -52,24 +43,15 @@ sudo test
 
 echo "  -Checking install location..."
 
-if [ -e $executable ] || [ -d $resource ]
+if [ ! -e $executable ] && [ ! -d $resource ]
 then
-  writeRed "Installation already exists, would you like to overwrite it?"
-  read -p "(Y/N) " confirm
-  confirm=$(echo $confirm | tr 'a-z' 'A-Z')
-  if [[ ! $confirm =~ ^Y ]]
-  then
-    exit
-  fi
-elif [ ! -d $executableDir ] || [ ! -d $resourceDir ]
-then
-  writeRed "  -Creating proper directories (this installation may fail)..."
-  sudo mkdir $executableDir && sudo mkdir $resource
+  writeRed "Installation does not exist"
+  exit 1
 fi
 
-echo "  -Copying resources..."
+echo "  -Deleting resources..."
 
-sudo cp "cli.py" $executable
-sudo cp -a "py/." $resource
+sudo rm -rf $resource
+sudo rm $executable
 
-writeGreen "Successfully installed ${shell}"
+writeGreen "Successfully uninstalled ${shell}"

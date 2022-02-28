@@ -14,7 +14,8 @@ bin = '/'.join(sys.argv[0].split('/')[:-1]) + '/py/'
 if sys.argv[0].count('/') < 1:
 	bin = './py/'
 if not os.path.isdir(bin):
-	bin = '/usr/local/share/py/'
+	# Currently only supports darwin, will add case system when install.sh is updated
+	bin = '/usr/local/share/pysh/'
 	if not os.path.isdir(bin):
 		print("Failed to get resources")
 		quit()
