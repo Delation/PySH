@@ -7,7 +7,7 @@ class User:
 	flags: list
 	password: str = None
 
-import os, sys
+import os, sys, hashlib
 
 shell = 'PySH'
 bin = '/'.join(sys.argv[0].split('/')[:-1]) + '/py/'
@@ -22,10 +22,6 @@ if not os.path.isdir(bin):
 accounts = []
 account = None
 flags = []
-hashseed = os.getenv('PYTHONHASHSEED')
-if not hashseed:
-	os.environ['PYTHONHASHSEED'] = '0'
-	os.execv(sys.executable, [sys.executable] + sys.argv)
 
 class Login():
 	def create_log_file(self,path:str = bin+'users'):
@@ -40,7 +36,7 @@ class Login():
 				args = n.split('|')
 				if len(args) < 3:
 					break
-				test = User(args[0],args[1].split(','),int(args[2]))
+				test = User(args[0],args[1].split(','),args[2].strip())
 				accounts.append(test)
 	def add_login(self,account:User,path:str = bin+'users'):
 		with open(path,'a') as i:
@@ -58,14 +54,14 @@ def main():
 	account = User(input('Username: '),flags)
 	for i in accounts:
 		if account.username == i.username:
-			account.password = hash(input(f'Welcome back, {account.username}\nPlease enter your password: '))
+			account.password = hashlib.md5(input(f'Welcome back, {account.username}\nPlease enter your password: ').encode('utf-8',errors='replace')).hexdigest()
 			for i in accounts:
 				if account.username == i.username and account.password == i.password:
 					log = True
 			break
 	if flags:
 		while not account.password:
-			account.password = hash(input('This account isn\'t recognized.\nPlease enter a new password: '))
+			account.password = hashlib.md5(input('This account isn\'t recognized.\nPlease enter a new password: ').encode('utf-8',errors='replace')).hexdigest()
 			if account.password:
 				Login().add_login(account)
 				log = True
