@@ -13,9 +13,12 @@ shell = 'PySH'
 bin = '/'.join(sys.argv[0].split('/')[:-1]) + '/py/'
 if sys.argv[0].count('/') < 1:
 	bin = './py/'
+platform = sys.platform
 if not os.path.isdir(bin):
-	# Currently only supports darwin, will add case system when install.sh is updated
-	bin = '/usr/local/share/pysh/'
+	if platform.startswith('darwin'):
+		bin = '/usr/local/share/pysh/'
+	elif platform.startswith('win'):
+		bin = '/Windows/System32/PySH/py/'
 	if not os.path.isdir(bin):
 		print("Failed to get resources")
 		quit()

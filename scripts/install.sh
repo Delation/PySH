@@ -36,7 +36,7 @@ case $OSTYPE in
 executable=$executableDir"/"$(echo $shell | tr 'A-Z' 'a-z')
 resource=$resourceDir"/pysh"
 
-echo "  -Assessing files..."
+echo "  -Assessing files..." && cd ..
 
 if [ ! -e "./cli.py" ] || [ ! -d "./py/" ]
 then
