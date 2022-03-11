@@ -85,6 +85,7 @@ def main():
 			continue
 		with open(bin + i,'r') as file:
 			exec(file.read(), commands, None)
+	commands['home_cwd'] = os.getcwd()
 	commands['shell'] = shell
 	commands['accounts'] = accounts
 	commands['account'] = account
