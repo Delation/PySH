@@ -1,7 +1,7 @@
 def uname(option:str = None):
 	if not option:
 		option = '-a'
-	usage = Utility().require_opts([option,],['a','m','n','p','r','s','v'])
+	usage = utility().require_opts([option,],['a','m','n','p','r','s','v'])
 	if option == usage[0]:
 		return ' '.join(os.uname())
 	elif option == usage[1]:

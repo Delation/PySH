@@ -2,7 +2,7 @@ def cat(filename:str):
 	if not os.path.isfile(filename):
 		raise FileNotFoundError('invalid file location')
 	clear()
-	lines, columns = Utility().get_size()
+	lines, columns = utility().get_size()
 	with open(filename,'r') as file:
 		rows = file.read().split('\n')
 	print(f'{filename}'+'-'*(columns-len(filename)))

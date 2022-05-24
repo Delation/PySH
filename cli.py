@@ -20,8 +20,7 @@ if not os.path.isdir(bin):
 	elif platform.startswith('win'):
 		bin = '/Windows/System32/PySH/py/'
 	if not os.path.isdir(bin):
-		print("Failed to get resources")
-		quit()
+		quit('Failed to get resources')
 accounts = []
 account = None
 flags = []
@@ -39,22 +38,20 @@ class Login():
 				args = n.split('|')
 				if len(args) < 3:
 					break
-				test = User(args[0],args[1].split(','),args[2].strip())
-				accounts.append(test)
+				h = User(args[0],args[1].split(','),args[2].strip())
+				accounts.append(h)
 	def add_login(self,account:User,path:str = bin+'users'):
 		with open(path,'a') as i:
 			i.write(f'{account.username}|{",".join(account.flags)}|{account.password}\n')
 
 def main():
-	global account
-	global accounts
-	global flags
+	global account, accounts, flags
 	if Login().create_log_file():
 		Login().get_login()
 	else:
 		flags.append('administrator')
 	log = False
-	account = User(input('Username: '),flags)
+	account = User(input('Username: '), flags)
 	for i in accounts:
 		if account.username == i.username:
 			account.password = hashlib.md5(input(f'Welcome back, {account.username}\nPlease enter your password: ').encode('utf-8',errors='replace')).hexdigest()
@@ -74,6 +71,12 @@ def main():
 		main()
 		return
 
+	# Retrieve proper current account
+	for i in accounts:
+		if i.username == account.username:
+			account = i
+			break
+
 	commands = {}
 
 	i = []
@@ -85,6 +88,7 @@ def main():
 			continue
 		with open(bin + i,'r') as file:
 			exec(file.read(), commands, None)
+	commands['bin'] = bin
 	commands['home_cwd'] = os.getcwd()
 	commands['shell'] = shell
 	commands['accounts'] = accounts
@@ -113,7 +117,7 @@ def main():
 					output = commands[i](*cmd)
 					if output:
 						print(output)
-				except IndexError as e:
+				except (IndexError, ValueError, FileNotFoundError, TypeError) as e:
 					print(f'{shell}: {i}: {e}')
 				except Exception as e:
 					print(f'{shell}: {i}: {e}')
@@ -126,5 +130,5 @@ def main():
 	main()
 	return
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 	main()

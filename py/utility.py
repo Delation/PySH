@@ -1,6 +1,6 @@
 import os, inspect, sys as system, platform
 
-class Utility():
+class utility():
 	def require_opts(self,args:list,usage:list):
 		e = f'illegal option %s\nusage: {inspect.stack()[1][3]} [-{"".join(usage)}]'
 		for i in args:

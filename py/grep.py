@@ -1,5 +1,5 @@
 def grep(option:str, search_string:str = None, location:str = None):
-	usage = Utility().require_opts([option,],['i','c','r'])
+	usage = utility().require_opts([option,],['i','c','r'])
 	if None in (search_string, location):
 		raise TypeError('missing one or more positional arguments')
 	if option == usage[0]:
